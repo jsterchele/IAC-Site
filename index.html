@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="">
+  <meta name="author" content="Joe Sterchele">
+  <title>Imagining Ancient Cornith</title>
+  <!-- JQuery/Bootstrap CSS && JS -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <!-- My Javascript/CSS File -->
+  <link rel="stylesheet" href="assets/css/app.css">
+  <!-- Load Leaflet - map application -->
+  <link rel="stylesheet" href="leaflet/leaflet.css"/>
+  <script src="leaflet/leaflet.js"></script>
+  <script src="leaflet/leaflet.ajax.min.js"></script>
+  <script src="corinth-geo.js"></script>
+
+  <link rel="apple-touch-icon" sizes="76x76" href="assets/img/favicon-76.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="assets/img/favicon-120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="assets/img/favicon-152.png">
+  <link rel="icon" sizes="196x196" href="assets/img/favicon-196.png">
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button> <!-- Hamburger button for collapsed navbar --> 
+        <div class="navbar-icon-container">
+          <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
+          <a href="#" class="navbar-icon pull-right visible-xs" id="reading-sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
+          <a href="#" class="navbar-icon pull-right visible-xs" id="map-sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
+        </div><!-- navbar-icon-container -->
+        <a class="navbar-brand" href="#">IAC</a>
+      </div><!-- navbar-header -->
+      <div class="navbar-collapse collapse" id="myNavbar">
+       <div id="prevNext" class="navbar-right">
+        <button type="button" id="next" class="btn btn-blk pull-right"><i class="glyphicon glyphicon-arrow-right white"></i></button>
+        <button type="button" id="previous" class="btn btn-blk pull-right"><i class="glyphicon glyphicon-arrow-left white"></i></button>
+      </div> <!-- prevNext -->
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Resources <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="full-extent-btn"><i class="fa fa-arrows-alt"></i>&nbsp;&nbsp;About</a></li>
+            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="legend-btn"><i class="fa fa-picture-o"></i>&nbsp;&nbsp;Home</a></li>
+            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="legend-btn"><i class="fa fa-picture-o"></i>&nbsp;&nbsp;Culture Essays</a></li>
+            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="legend-btn"><i class="fa fa-picture-o"></i>&nbsp;&nbsp;Media</a></li>
+            <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="legend-btn"><i class="fa fa-picture-o"></i>&nbsp;&nbsp;Activities</a></li>
+          </ul> <!-- dropdown-menu -->
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" id="downloadDrop" href="#" role="button" data-toggle="dropdown"><i class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Table Of Contents <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Book 1</a></li>
+            <li><a href="#" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Book 2</a></li>
+            <li><a href="#" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Book 3</a></li>
+            <li><a href="#" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Book 4</a></li>
+          </ul><!-- dropdown menu-->
+        </li><!--dropdown-->
+        <li><a href="#">Grammar</a></li>
+        <li><a href="#">Vocab</a></li>
+        <li><a href="#" id="passage-max"></i>Maximize Passage</a></li>
+        <li><a href="#" id="reading-max"></i>Maximize Content</a></li>
+      </ul><!-- nav navbar-nav-->
+    </div> <!--/.navbar-collapse -->
+  </div> <!-- container-fluid -->
+</nav> <!-- navbar navbar-inverse navbar-fixed-top -->
+<div id="container">
+  <div class="row halfs">
+    <div id="left-container" class="col-md-6 col-sm-6 col-xs-12">
+      <div id="passage-container" class="col-xs-12 nopadding-r">
+       <div id="title" class="col-xs-12 nopadding">
+        <div id="passage-number" class="title col-xs-6 nopadding"></div>
+        <div id="passage-name" class="title col-xs-6 nopadding"></div>
+      </div><!--title-->
+      <div id="passage-content" ></div><!--passage-->
+    </div><!--passage-container-->
+  </div><!--left-container-->
+
+
+
+  <div id="reading-container" class="col-md-6 col-sm-6 col-xs-12">
+<ul class="nav nav-pills nav-justified row">
+    <li class="tab-pills col-xs-3 active"><a class="white-bg" data-toggle="pill" href="#map-container">Map Viewer</a></li>
+    <li class="tab-pills col-xs-3"><a class="white-bg" data-toggle="pill" href="#pre-content">Pre Readings</a></li>
+    <li class="tab-pills col-xs-3"><a class="white-bg" data-toggle="pill" href="#post-content">Post Readings</a></li>
+    <li class="tab-pills col-xs-3"><a class="white-bg" data-toggle="pill" href="#culture-content">Culture Essays</a></li>
+</ul>
+  
+  <div class="tab-content col-xs-12">
+  <div id="map-container" class="tab-pane fade in active">    
+    <div id="map">
+
+        <script>
+              var pirates = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', 
+              {
+                id: 'corinth2015.a22822d3',
+                accessToken: 'pk.eyJ1IjoiY29yaW50aDIwMTUiLCJhIjoiYzM2NTIzM2M0OWFkZGMzNjFlM2ZkNGIyZjgyODg2NzIifQ.-4m5xDlvKtdTzleAeJveUw'
+              }
+              );
+
+              map = L.map("map", {
+                zoom: 14,
+                center: [37.905, 22.879],
+                layers: [pirates],
+                attributionControl: false
+              });
+
+
+    //Adding a GeoJson layer of every mapped location.
+              var geojsonLayer = new L.geoJson(corinth,{onEachFeature:function(feature, layer) {
+              //If the feature hs properties, make a popup blimp and put them on it.
+              if (feature.properties) 
+              {
+               layer.bindPopup(Object.keys(feature.properties).map(function(k)
+               { 
+                 return k + ": " + feature.properties[k] ;
+               }).join("<br />"),{maxHeight:200});
+             }
+           }});
+              geojsonLayer.addTo(map); 
+                  
+             </script>
+        </div><!--map-->
+    </div><!--map-container-->
+    <div id="pre-content" class="tab-pane fade extra-content">
+    </div>
+    <div id="post-content" class="tab-pane fade extra-content">
+    </div>
+    <div id="culture-content" class="tab-pane fade extra-content">
+    </div>
+  </div>
+<div id="media-container" class="col-xs-12">
+</div><!--media-container-->
+</div>
+</div><!--row-->
+
+<!-- Modal -->
+<div id="mediaModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-media">     
+      </div>
+      <div class="modal-body">  
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!--container-fluid-->
+
+<!-- Leaflet/typeahead/list -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js"></script>
+<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
+<script src="assets/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+/**This portion of the code Querys Drupal**/   
+        //The service comes in shape of a Json object.
+        $.getJSON('http://imaginingancientcorinth.com/cms/rest/views/passagenumber/', function (data) {
+          passageNumbers = data;
+          numPassages = passageNumbers.length;
+          retrievePassage();
+        });
+        passageId = getPassageID();
+        glossWords();
+</script>
+</body>
+</html>
