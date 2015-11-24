@@ -6,32 +6,32 @@ Manifesto
 
 
 ######Drupal
-   *Headless Drupal
-   *Entity Types
-   *Database
-   *Services
-   *Views
-   *Modules
-   *Management
+   * Headless Drupal
+   * Entity Types
+   * Database
+   * Services
+   * Views
+   * Modules
+   * Management
 		
 ######Reclaim Hosting
-   *File Structure
+   * File Structure
 
 ######HTML
-   *Bootstrap
-   *Dynamic Creation
+   * Bootstrap
+   * Dynamic Creation
 
 ######CSS
 ####### * App.css
-   *Bootstrap
-   *Responsiveness
+   * Bootstrap
+   * Responsiveness
 
 ######JS
 ###### * App.js
-   *Leaflet - Mapping Application
-   *Querying Drupal
+   * Leaflet - Mapping Application
+   * Querying Drupal
 
-Drupal - ImaginingAncientCorinth.com/cms
+Drupal - <http://www.ImaginingAncientCorinth.com/cms>
 ----------------------------------------
 Drupal is the content management system chosen for this project.  Drupal's main strengths lie in the power and flexibility of its back-end; its primary value to users is its ability display complex content models.  However, the front-end of Drupal does not fit our needs.  The scope of this project was outside the realm of a Drupal website. To deal with this issue, we implemented Headless Drupal.  In this situation, Drupal stores the data and visitors will not interact with Drupal directly. Rather, visitors will be taken to a website developed with our Javascript framework, Bootstrap. This implementation gives us the flexibility to utilize Drupal’s enhanced content management system and the ability to create a front end that satisfies our needs. 
 The current implementation of Drupal includes 2 entity types, Passage and Media. These entities are separate from each other in Drupal’s database.  The intent behind this decision was that a single piece of media could be referenced by several passages.  This allows the normalization of our database.  Passages are the culmination of the content that we would like to show our visitors. Passages contain a title, passage number, story, passage content, glossed words, pre-reading, post-reading, and coordinates for the map.  Also, the passage entity references the media entity. The media entity contains a title, description, credits, and a file. A third entity will need to be added in the future. This entity will contain Culture Essays and their relevant data.
