@@ -22,12 +22,12 @@ Manifesto
    * Dynamic Creation
 
 ######CSS
-####### * App.css
+   * App.css
    * Bootstrap
    * Responsiveness
 
 ######JS
-###### * App.js
+   * App.js
    * Leaflet - Mapping Application
    * Querying Drupal
 
