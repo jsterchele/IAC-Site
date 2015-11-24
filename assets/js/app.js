@@ -1,4 +1,4 @@
-var map, featureList, boroughSearch = [], theaterSearch = [], museumSearch = [];
+var map;
 
 $(window).resize(function() {
   sizeLayerControl();
@@ -32,7 +32,7 @@ $("#passage-max").on("click", function(e){
   width = $("#left-container").width() / $(document).width() * 100; 
   if(width < 90)
   {
-      $("#left-container").width("100%");
+      $("#left-container").width(  $("#left-container").width() * 2 );
       $("#reading-container").hide();
   }
   else
@@ -50,7 +50,7 @@ $("#reading-max").on("click", function(e){
   width = $("#reading-container").width() / $(document).width() * 100; 
   if(width < 90)
   {
-      $("#reading-container").width("90%");
+      $("#reading-container").width( $("#reading-container").width() * 2 );
       $("#left-container").hide();
   }
   else
@@ -71,12 +71,12 @@ function checkStory()
   if( $("#passage-name").html() == "" )
   {
      $("#passage-name").hide();
-     $("#passage-number").removeClass("col-xs-6").addClass("col-xs-12");
+     $("#passage-number").removeClass("col-xs-4").addClass("col-xs-12");
   }
   else
   {
      $("#passage-name").show();
-     $("#passage-number").removeClass("col-xs-12").addClass("col-xs-6"); 
+     $("#passage-number").removeClass("col-xs-12").addClass("col-xs-4"); 
   }
 }
      
@@ -85,7 +85,6 @@ function checkStory()
      ***/ 
  function mediaButtons(){     
     $(".mBtn").click(function(){
-        console.log("YUPPP");
         $("#modal-title").html("");
         $("#modal-media").html("");
         $("#modal-body").html("");
@@ -124,7 +123,7 @@ function checkStory()
         //if it is not a youtube video/pdf/txt, put it in a img tag
         if( null == ( media[1].match(/pdf/i) || media[1].match(/txt/i) || media[1].match(/youtube.com/) ) )
         {
-           source = "<img src='"+ media[1] + "'></img>";
+           source = "<img height='100%' src='"+ media[1] + "'></img>";
         }
         else //throw it in a iframe tag
         {
@@ -162,8 +161,7 @@ This function should be loaded everytime a new passage is loaded. It will check 
 */
 function disableButtons(){
 
-  
-  if(passageId == numPassages)
+  if(passageId == numPassages - 1)
   {
     $('#next').prop('disabled', true); //Disables the next button if the user is at the end of the book.
   }
@@ -186,19 +184,70 @@ function disableButtons(){
 /**This function grabs a passage by its Passage Number.
 It will then set all of the HTML reading container fields.
 @param pasId the number of the passage.*/
-function getPassage(passageId){
+function getPassage(passId){
 
 //resets media-container
 $( " #media-container " ).html("");
 
+console.log("passID" + passId);
+console.log("passageNumbers.length" + passageNumbers.length );
 
-//saves the passageIdNum into local storage if possible.
-savePassageID(passageId);
+//if there is an issue with the numbering of passageIds
+if( passId >= passageNumbers.length )
+{
+   passId = passageNumbers.length -1;
+}
+if ( passId < 0 )
+{
+   passId = 0;
+}
+
+passageId = passId;
+
+
 //Changes the passage ID into a passage Number
 pasNum = passageNumbers[passageId].passage_number;
+
 //This grabs a Service that given a passage number, will return all of the infomration regarding the passage.
 $.getJSON('http://imaginingancientcorinth.com/cms/rest/views/rest_api?filters[num]='+pasNum , function (data) {
-console.log(data);
+    $("#passage-number").html(data[0].passage_number);
+    $("#passage-name").html(data[0].story);
+    $("#pre-content").html(data[0].pre_q);
+    $("#post-content").html(data[0].post_q);
+    $("#passage-content").html( glossWords(data[0].words, data[0].body) );
+    $("#question-content").html(data[0].question);
+    var content = $('#passage-content').html();
+    $("#text-content").html(content);
+    mediaToDiv(data[0].media, data[0].media2, data[0].media3, data[0].media4);
+    //if the site has gps data, pan to the site.
+    console.log(data[0].lon + "  " + data[0].lat);
+    if(data[0].lat != null && data[0].lon != null)
+     { 
+        map.panTo([data[0].lon, data[0].lat], 
+        {
+            animate:true, 
+            duration:3
+        });
+     }  //checks if any of the buttons must be disabled.
+        disableButtons();
+        checkStory();
+        mediaButtons();
+  });
+  map.invalidateSize();
+  $(" #text-content ").hide();
+  
+//saves the passageIdNum into local storage if possible.
+savePassageID(passageId);
+}
+
+/**This function grabs a passage by its Passage Number.  This is also the first getPassage if no local storage is found.
+It will then set all of the HTML reading container fields.
+@param pasId the number of the passage.*/
+function getPassage1(pasNum){
+
+
+//This grabs a Service that given a passage number, will return all of the infomration regarding the passage.
+$.getJSON('http://imaginingancientcorinth.com/cms/rest/views/rest_api?filters[num]='+pasNum , function (data) {
     $("#passage-number").html(data[0].passage_number);
     $("#passage-name").html(data[0].story);
     $("#pre-content").html(data[0].pre_q);
@@ -223,43 +272,9 @@ console.log(data);
   });
   map.invalidateSize();
   $(" #text-content ").hide();
-}
-
-/**This function grabs a passage by its Passage Number.
-It will then set all of the HTML reading container fields.
-@param pasId the number of the passage.*/
-function getPassage1(pasNum){
-console.log('dogballs');
+  
 savePassageID(0);
-//This grabs a Service that given a passage number, will return all of the infomration regarding the passage.
-$.getJSON('http://imaginingancientcorinth.com/cms/rest/views/rest_api?filters[num]='+pasNum , function (data) {
-    $("#passage-number").html(data[0].passage_number);
-    $("#passage-name").html(data[0].story);
-    $("#pre-content").html(data[0].pre_q);
-    $("#post-content").html(data[0].post_q);
-    $("#passage-content").html( glossWords(data[0].words, data[0].body) );
-    $("#question-content").html(data[0].question);
-    var content = $('#passage-content').html();
-    $("#text-content").html(content);
-    mediaToDiv(data[0].media, data[0].media2, data[0].media3, data[0].media4);
-    //if the site has gps data, pan to the site.
-    if(data[0].lat != null && data[0].lon != null)
-     { 
-        map.panTo([data[0].lon, data[0].lat], 
-        {
-            animate:true, 
-            duration:3
-        });
-     }  //checks if any of the buttons must be disabled.
-        disableButtons();
-        checkStory();
-  });
-  map.invalidateSize();
-  $(" #text-content ").hide();
-  mediaButtons();
-
 }
-
 
 /***
 This function will save the passageID via HTML 5's internal storage feature 
@@ -285,6 +300,10 @@ if (typeof(Storage) !== "undefined") {
     {
        passid = 0;
     }
+    if ( passid == null )
+    {
+       passid = 0;
+    }
     return passid;
  }
  else
@@ -301,7 +320,6 @@ function retrievePassage(){
     }
     else
     {
-      console.log('not one');
       getPassage(getPassageID());
     }
 }
@@ -318,9 +336,10 @@ if( str != null )
    //replacing all of the '&#039;' with quotation marks.
     str = str.replace(/&#039;/g, '"');
     str = str.replace(/&quot;/g, '"');
+    
     //matching from first quotation mark to second quotation mark.
     var res = str.match(/".*?"/gi);
-
+    
     //creating two arrays to hold the words that should become glossed, and their definitions.
     glossedWords = [];
     tidyWords = [];
@@ -490,5 +509,30 @@ function mediaToDiv(m1, m2, m3, m4){
     	var div = $(source);
 	$("#media-container").append(div);
     }
+}
+    
+    
+/***
+This function dynamically creates the "Table of contents"
+This will take in the JSON object from the service. It will look at each passage and add it to the html if it has a story that has not yet been added.
+@param passageNums the service call for passageNumbers and the passage's story.
+***/
+function createMenu(passageNums){
+//a blank array that will hold story titles.
+  storyTitles = [];
+
+  for ( var i = 0; i < passageNums.length; i++ )
+  {
+    //if the story is null or an empty string, skip it.
+    if ( passageNums[i].story !== (null) && passageNums[i].story.trim() !== ("") && storyTitles.indexOf(passageNums[i].story.trim().toLowerCase()) == -1 )
+    {
+        //add this story to the array of already created menu elements
+        storyTitles.push(passageNums[i].story.trim().toLowerCase());
+            
+        //append the html
+        var link = "<li><a href='#' target='_blank' data-toggle='collapse' data-target='.navbar-collapse.in' onclick='getPassage("+ i +");return false;'>" + passageNums[i].story + "</a></li>";
+        $("#toc").append($(link));
+    }
+  }  
 }
     
