@@ -46,10 +46,6 @@
         <a class="navbar-brand" href="#">IAC</a>
       </div><!-- navbar-header -->
       <div class="navbar-collapse collapse" id="myNavbar">
-       <div id="prevNext" class="navbar-right">
-        <button type="button" id="next" class="btn btn-blk pull-right"><i class="glyphicon glyphicon-arrow-right white"></i></button>
-        <button type="button" id="previous" class="btn btn-blk pull-right"><i class="glyphicon glyphicon-arrow-left white"></i></button>
-      </div> <!-- prevNext -->
       <ul class="nav navbar-nav">
         <li class="dropdown">
           <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Resources <b class="caret"></b></a>
@@ -62,12 +58,8 @@
           </ul> <!-- dropdown-menu -->
         </li>
         <li class="dropdown">
-          <a class="dropdown-toggle" id="downloadDrop" href="#" role="button" data-toggle="dropdown"><i class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Table Of Contents <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Book 1</a></li>
-            <li><a href="#" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Book 2</a></li>
-            <li><a href="#" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Book 3</a></li>
-            <li><a href="#" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Book 4</a></li>
+          <a class="dropdown-toggle" id="tableOfContents" href="#" role="button" data-toggle="dropdown"><i class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Table Of Contents <b class="caret"></b></a>
+          <ul id="toc" class="dropdown-menu">
           </ul><!-- dropdown menu-->
         </li><!--dropdown-->
         <li><a href="#">Grammar</a></li>
@@ -79,12 +71,14 @@
   </div> <!-- container-fluid -->
 </nav> <!-- navbar navbar-inverse navbar-fixed-top -->
 <div id="container">
+  <button type="button" id="next" class="prev-next btn btn-blk"><i class="glyphicon glyphicon-arrow-right white"></i></button>
+  <button type="button" id="previous" class="prev-next btn btn-blk"><i class="glyphicon glyphicon-arrow-left white"></i></button>
   <div class="row halfs">
     <div id="left-container" class="col-md-6 col-sm-6 col-xs-12">
       <div id="passage-container" class="col-xs-12 nopadding-r">
        <div id="title" class="col-xs-12 nopadding">
-        <div id="passage-number" class="title col-xs-6 nopadding"></div>
-        <div id="passage-name" class="title col-xs-6 nopadding"></div>
+        <div id="passage-number" class="title col-xs-4 nopadding"></div>
+        <div id="passage-name" class="title col-xs-8 nopadding"></div>
       </div><!--title-->
       <div id="passage-content" ></div><!--passage-->
     </div><!--passage-container-->
@@ -165,31 +159,26 @@
       <div class="modal-footer">
       </div>
     </div>
-
   </div>
 </div>
-
 </div><!--container-fluid-->
 
 <!-- Leaflet/typeahead/list -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
-<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js"></script>
-<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
-<script src="assets/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
 /**This portion of the code Querys Drupal**/   
         //The service comes in shape of a Json object.
         $.getJSON('http://imaginingancientcorinth.com/cms/rest/views/passagenumber/', function (data) {
-          passageNumbers = data;
-          numPassages = passageNumbers.length;
-          retrievePassage();
-        });
-        passageId = getPassageID();
-        glossWords();
+           })
+           .done( function (data){
+              passageNumbers = data;
+              numPassages = passageNumbers.length;
+              passageId = getPassageID();
+              retrievePassage();
+              createMenu(data);
+               });
 </script>
 </body>
 </html>
