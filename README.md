@@ -5,7 +5,7 @@ Manifesto
 
 
 
-##Drupal
+######Drupal
    *Headless Drupal
    *Entity Types
    *Database
@@ -14,20 +14,20 @@ Manifesto
    *Modules
    *Management
 		
-##Reclaim Hosting
+######Reclaim Hosting
    *File Structure
 
-##HTML
+######HTML
    *Bootstrap
    *Dynamic Creation
 
-##CSS
-###*App.css
+######CSS
+####### * App.css
    *Bootstrap
    *Responsiveness
 
-##JS
-###*App.js
+######JS
+###### * App.js
    *Leaflet - Mapping Application
    *Querying Drupal
 
